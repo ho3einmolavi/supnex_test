@@ -1,0 +1,11 @@
+{
+    "nodeEnv": "stage",
+    "port": 3000,
+    "mongo": {
+      "url": "mongodb://localhost:27017/supnex"
+    },
+    "swagger": {
+      "title": "Supnex API",
+      "version": "1.0.0"
+    }
+}
