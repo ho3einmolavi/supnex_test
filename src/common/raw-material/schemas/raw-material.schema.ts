@@ -1,10 +1,26 @@
 import { Schema, Model } from 'mongoose';
 import { UnitOfMeasurement } from '../enums/units-of-measurement.enum';
 
+export const OfferSchema = new Schema(
+  {
+    supplier: {
+      type: Schema.Types.ObjectId,
+      ref: 'Supplier',
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+  },
+  { _id: false, timestamps: false },
+);
+
 export const RawMaterialSchema = new Schema(
   {
     name: {
       type: String,
+      unique: true,
       required: true,
     },
     category: {
@@ -17,12 +33,18 @@ export const RawMaterialSchema = new Schema(
       enum: Object.values(UnitOfMeasurement),
       required: true,
     },
-    suppliers: [{ type: Schema.Types.ObjectId, ref: 'Supplier' }],
+    offers: [
+      {
+        type: OfferSchema,
+        required: false,
+      },
+    ],
     stock: {
       type: Number,
       required: true,
       min: 0,
       integer: true,
+      default: 0,
     },
   },
   { timestamps: true },

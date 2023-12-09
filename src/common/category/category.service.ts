@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 import { CategoryModel } from './schemas/category.schema';
 import { CategoryDto } from './dtos/category.dto';
 
@@ -20,5 +21,9 @@ export class CategoryService {
 
   async getAll(): Promise<CategoryDto[]> {
     return this.categoryModel.find({}, { name: true }) as CategoryDto[];
+  }
+
+  async getById(categoryId: Types.ObjectId): Promise<CategoryDto> {
+    return this.categoryModel.findOne({ _id: categoryId }) as CategoryDto;
   }
 }

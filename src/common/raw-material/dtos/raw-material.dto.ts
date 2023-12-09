@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { UnitOfMeasurement } from '../enums/units-of-measurement.enum';
+import { OfferDto } from './offer.dto';
 
 export class RawMaterialDto {
   @ApiProperty({
@@ -29,11 +30,11 @@ export class RawMaterialDto {
   unitOfMeasurement: UnitOfMeasurement;
 
   @ApiProperty({
-    type: String,
+    type: OfferDto,
     isArray: true,
-    required: true,
+    required: false,
   })
-  suppliers: Types.ObjectId[];
+  offers?: OfferDto[];
 
   @ApiProperty({
     type: Number,

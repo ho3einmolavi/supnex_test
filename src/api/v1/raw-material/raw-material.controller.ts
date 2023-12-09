@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   HttpCode,
+  HttpException,
   HttpStatus,
   Post,
   UsePipes,
@@ -13,10 +14,16 @@ import {
   PostCreateRawMaterialBodyDto,
   PostCreateRawMaterialBodyValidation,
 } from './request-dto/create-raw-material.dto';
+import { CategoryService } from '../../../common/category/category.service';
+import { RawMaterialService } from '../../../common/raw-material/raw-material.service';
 
 @ApiTags('Raw Material')
 @Controller('api/v1/raw-material')
 export class V1RawMaterialController {
+  constructor(
+    private readonly categoryService: CategoryService,
+    private readonly rawMaterialService: RawMaterialService,
+  ) {}
   @ApiOkResponse({
     type: StandardResponseFactory({}),
   })
@@ -28,8 +35,18 @@ export class V1RawMaterialController {
   @HttpCode(HttpStatus.CREATED)
   @Post()
   async createRawMaterial(
-    @Body() body: PostCreateRawMaterialBodyDto,
+    @Body()
+    { name, categoryId, unitOfMeasurement }: PostCreateRawMaterialBodyDto,
   ): Promise<Record<string, never>> {
+    const category = await this.categoryService.getById(categoryId);
+    if (!category) {
+      throw new HttpException('category is not found', HttpStatus.BAD_REQUEST);
+    }
+    await this.rawMaterialService.create({
+      name,
+      category: categoryId,
+      unitOfMeasurement,
+    });
     return {};
   }
 }
