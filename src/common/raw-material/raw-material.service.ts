@@ -5,6 +5,7 @@ import { RawMaterialDto } from './dtos/raw-material.dto';
 import { ICreateRawMaterialServiceInput } from './interfaces/create-raw-material-service-input.interface';
 import { Types } from 'mongoose';
 import { IAddSupplierServiceInput } from './interfaces/add-supplier-service-input.interface';
+import { RawMaterialItemDto } from '../../api/v1/raw-material/response-dto/get-raw-materials-list.dto';
 
 @Injectable()
 export class RawMaterialService {
@@ -49,5 +50,37 @@ export class RawMaterialService {
         { new: true },
       );
     }
+  }
+
+  async getRawMaterialsList(): Promise<RawMaterialItemDto[]> {
+    const rawMaterials = await this.rawMaterialModel
+      .find({})
+      .populate([
+        {
+          path: 'category',
+          select: 'name',
+        },
+        {
+          path: 'offers.supplier',
+        },
+      ])
+      .lean()
+      .exec();
+    const mapSupplier = (offer) => ({
+      _id: offer.supplier._id,
+      name: offer.supplier.name,
+      phoneNumber: offer.supplier.phoneNumber,
+      price: offer.price,
+    });
+
+    const mapRawMaterial = (rawMaterial) => ({
+      _id: rawMaterial._id,
+      name: rawMaterial.name,
+      unitOfMeasurement: rawMaterial.unitOfMeasurement,
+      stock: rawMaterial.stock,
+      category: rawMaterial.category.name,
+      suppliers: rawMaterial.offers.map(mapSupplier),
+    });
+    return rawMaterials.map(mapRawMaterial);
   }
 }

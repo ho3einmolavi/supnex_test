@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpException,
   HttpStatus,
@@ -25,6 +26,7 @@ import {
 } from './request-dto/add-supplier.dto';
 import { CheckRawMaterialPipe } from '../../../common/raw-material/pipes/check-raw-material.pipe';
 import { CheckSupplierDataPipe } from '../../../common/raw-material/pipes/check-supplier-data.pipe';
+import { GetGetRawMaterialsListResponseDto } from './response-dto/get-raw-materials-list.dto';
 
 @ApiTags('Raw Material')
 @Controller('api/v1/raw-material')
@@ -82,5 +84,15 @@ export class V1RawMaterialController {
       price,
     });
     return {};
+  }
+
+  @ApiOkResponse({
+    type: StandardResponseFactory(GetGetRawMaterialsListResponseDto),
+  })
+  @HttpCode(HttpStatus.OK)
+  @Get()
+  async getRawMaterialsList(): Promise<GetGetRawMaterialsListResponseDto> {
+    const rawMaterials = await this.rawMaterialService.getRawMaterialsList();
+    return { rawMaterials };
   }
 }
